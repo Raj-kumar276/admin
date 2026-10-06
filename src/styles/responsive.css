@@ -1,0 +1,24 @@
+/* responsive */
+@media (max-width:1200px){.grid-main{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}.grid-3>:last-child{grid-column:1/-1}}
+@media (max-width:940px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;left:0;top:0;bottom:0;height:100%;width:272px;transform:translateX(-100%);transition:transform .25s ease;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .side.open{transform:none}
+  .ib.menu-btn{display:inline-grid}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .support{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .top{padding-inline:16px}
+  .content{padding-inline:16px;padding-block:18px 40px}
+  .search{order:9;flex-basis:100%}
+  .hide-sm{display:none!important}
+  .grid-3,.grid-2{grid-template-columns:1fr}
+  .kpi .val{font-size:21px}
+  .kpi{padding:14px}
+  .pagehead h2{font-size:20px}
+  .mb .two{grid-template-columns:1fr}
+  .kv{grid-template-columns:100px minmax(0,1fr)}
+  .live span{display:none}
+  #inviteForm{grid-template-columns:1fr!important}
+}
