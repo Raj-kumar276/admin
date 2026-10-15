@@ -6,6 +6,8 @@ import SignedOutLock from './components/layout/SignedOutLock.jsx';
 import OrderDrawer from './components/overlays/OrderDrawer.jsx';
 import ModalHost from './components/overlays/ModalHost.jsx';
 import Toasts from './components/overlays/Toasts.jsx';
+import NetworkBanner from './components/network/NetworkBanner.jsx';
+import NetworkDiagnosticsModal from './components/network/NetworkDiagnosticsModal.jsx';
 import { useAdmin } from './context/AdminContext.jsx';
 import { SVC, PAGE_TITLES } from './data/constants.js';
 
@@ -64,6 +66,7 @@ export default function App() {
       <div className="app">
         <Sidebar open={sideOpen} onClose={() => setSideOpen(false)} />
         <div className="main">
+          <NetworkBanner />
           <Topbar title={title} subtitle={subtitle} onOpenMenu={() => setSideOpen(true)} />
           <main className="content">
             <Routes>
@@ -90,6 +93,7 @@ export default function App() {
       </div>
       <OrderDrawer />
       <ModalHost />
+      <NetworkDiagnosticsModal />
       <Toasts />
       <SignedOutLock />
     </>

@@ -3,6 +3,7 @@ import Icon from '../common/Icon.jsx';
 import GlobalSearch from './GlobalSearch.jsx';
 import NotificationsPopover from './NotificationsPopover.jsx';
 import AccountMenu from './AccountMenu.jsx';
+import NetworkPill from '../network/NetworkPill.jsx';
 import useTheme from '../../hooks/useTheme.js';
 import { useAdmin } from '../../context/AdminContext.jsx';
 
@@ -41,6 +42,7 @@ export default function Topbar({ title, subtitle, onOpenMenu }) {
       </div>
       <div className="grow" />
       <GlobalSearch />
+      <NetworkPill />
       <button
         className="live"
         aria-pressed={live}

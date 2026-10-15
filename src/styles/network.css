@@ -1,0 +1,671 @@
+/* ==========================================================================
+   NETWORK & CONNECTIVITY STYLES
+   Offline, Slow Networking & Diagnostics UI
+   ========================================================================== */
+
+/* ---------------- Topbar Network Indicator ---------------- */
+.net-indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.net-indicator-pill:hover {
+  background: var(--surface-2);
+  border-color: var(--text-2);
+}
+.net-indicator-pill.online {
+  color: var(--green-ink);
+  border-color: color-mix(in oklab, var(--green) 35%, var(--line));
+}
+.net-indicator-pill.slow {
+  color: #B57400;
+  border-color: color-mix(in oklab, #F0B84A 55%, var(--line));
+  background: color-mix(in oklab, #F0B84A 8%, var(--surface));
+  animation: net-glow-slow 2.4s infinite ease-in-out;
+}
+.net-indicator-pill.offline, .net-indicator-pill.timeout {
+  color: var(--bad);
+  border-color: color-mix(in oklab, var(--bad) 50%, var(--line));
+  background: color-mix(in oklab, var(--bad) 8%, var(--surface));
+  animation: net-glow-bad 2s infinite ease-in-out;
+}
+.net-signal-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  padding-bottom: 1px;
+}
+.net-signal-bars span {
+  width: 2.5px;
+  background: currentColor;
+  border-radius: 1px;
+  opacity: 0.25;
+  transition: opacity 0.2s, height 0.2s;
+}
+.net-signal-bars span:nth-child(1) { height: 4px; }
+.net-signal-bars span:nth-child(2) { height: 7px; }
+.net-signal-bars span:nth-child(3) { height: 10px; }
+.net-signal-bars span:nth-child(4) { height: 12px; }
+
+.net-signal-bars.sig-4 span { opacity: 1; }
+.net-signal-bars.sig-2 span:nth-child(-n+2) { opacity: 1; }
+.net-signal-bars.sig-0 span { opacity: 0.15; }
+
+/* ---------------- Global Network Banner ---------------- */
+.net-floating-banner {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 65;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  animation: slide-banner-down 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.net-floating-banner.slow {
+  background: color-mix(in oklab, #E8A317 14%, var(--surface));
+  border-bottom-color: color-mix(in oklab, #E8A317 40%, var(--line));
+  color: var(--text);
+}
+.net-floating-banner.offline, .net-floating-banner.timeout {
+  background: color-mix(in oklab, var(--bad) 14%, var(--surface));
+  border-bottom-color: color-mix(in oklab, var(--bad) 40%, var(--line));
+  color: var(--text);
+}
+.net-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.net-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.net-floating-banner.slow .net-banner-badge {
+  background: #F0B84A;
+  color: #261700;
+}
+.net-floating-banner.offline .net-banner-badge,
+.net-floating-banner.timeout .net-banner-badge {
+  background: var(--bad);
+  color: #fff;
+}
+.net-banner-text {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.net-banner-text b {
+  font-weight: 700;
+}
+.net-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ---------------- Network Page ---------------- */
+.net-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Admin Simulation Controller Toolbar */
+.net-sim-toolbar {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.net-sim-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.net-sim-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.net-sim-pill {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.net-sim-pill:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+.net-sim-pill.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.net-sim-pill.active.pill-online {
+  background: var(--green);
+  color: var(--on-green);
+  border-color: var(--green);
+}
+.net-sim-pill.active.pill-slow {
+  background: #E8A317;
+  color: #100C00;
+  border-color: #E8A317;
+}
+.net-sim-pill.active.pill-offline,
+.net-sim-pill.active.pill-timeout {
+  background: var(--bad);
+  color: #ffffff;
+  border-color: var(--bad);
+}
+
+/* Hero Showcase Card */
+.net-hero-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 28px;
+  padding: 32px;
+  box-shadow: var(--shadow-pop);
+}
+.net-hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+.net-hero-card.online::before {
+  background: linear-gradient(90deg, var(--green), #8FD61A);
+}
+.net-hero-card.slow::before {
+  background: linear-gradient(90deg, #F0B84A, #E8A317);
+}
+.net-hero-card.offline::before,
+.net-hero-card.timeout::before {
+  background: linear-gradient(90deg, var(--bad), #E63946);
+}
+
+/* Image Visual Side */
+.net-image-container {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--ink);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px -6px rgba(0,0,0,0.3);
+  border: 1px solid var(--ink-3);
+}
+.net-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.net-image-container:hover img {
+  transform: scale(1.03);
+}
+.net-image-overlay-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  padding: 8px 12px;
+  background: rgba(14, 17, 12, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  font-size: 11.5px;
+}
+.net-radar-pulse {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+}
+.net-radar-ring {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: relative;
+}
+.net-radar-ring.online { background: var(--green); }
+.net-radar-ring.slow { background: #F0B84A; }
+.net-radar-ring.offline, .net-radar-ring.timeout { background: var(--bad); }
+
+.net-radar-ring::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: radar-wave 2s infinite ease-out;
+  opacity: 0;
+}
+
+/* Info Side */
+.net-hero-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+.net-state-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.net-state-badge.online {
+  background: var(--green-soft);
+  color: var(--green-ink);
+}
+.net-state-badge.slow {
+  background: color-mix(in oklab, #F0B84A 22%, var(--surface));
+  color: #B57400;
+}
+.net-state-badge.offline, .net-state-badge.timeout {
+  background: color-mix(in oklab, var(--bad) 16%, var(--surface));
+  color: var(--bad);
+}
+
+.net-hero-info h2 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.net-hero-info p.lead {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+/* Metrics Mini-Grid */
+.net-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.net-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.net-metric-card .label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.net-metric-card .val {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.net-metric-card .val small {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Hero Action Buttons */
+.net-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ---------------- Diagnostics & Subsystems Grid ---------------- */
+.net-dual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Interactive Diagnostic Test Suite */
+.net-box-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.net-box-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.net-box-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.net-diag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.net-diag-item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-size: 13.5px;
+}
+.net-diag-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.net-diag-icon.pass {
+  background: var(--green-soft);
+  color: var(--green-ink);
+}
+.net-diag-icon.warn {
+  background: color-mix(in oklab, #F0B84A 25%, var(--surface));
+  color: #B57400;
+}
+.net-diag-icon.fail {
+  background: color-mix(in oklab, var(--bad) 20%, var(--surface));
+  color: var(--bad);
+}
+.net-diag-icon.pending {
+  background: var(--surface-3);
+  color: var(--muted);
+}
+
+.net-diag-details b {
+  font-weight: 600;
+  display: block;
+}
+.net-diag-details span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.net-diag-status-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.net-diag-status-pill.pass {
+  background: color-mix(in oklab, var(--green) 18%, transparent);
+  color: var(--green-ink);
+}
+.net-diag-status-pill.warn {
+  background: color-mix(in oklab, #F0B84A 25%, transparent);
+  color: #B57400;
+}
+.net-diag-status-pill.fail {
+  background: color-mix(in oklab, var(--bad) 18%, transparent);
+  color: var(--bad);
+}
+
+/* Service Nodes Matrix */
+.net-nodes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.net-node-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.net-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.net-node-name {
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.net-node-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.net-node-led.live { background: var(--good); box-shadow: 0 0 8px var(--good); }
+.net-node-led.slow { background: #F0B84A; box-shadow: 0 0 8px #F0B84A; }
+.net-node-led.down { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+
+.net-node-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* Offline Action Queue Card */
+.net-queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.net-queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.net-queue-item.synced {
+  border-color: color-mix(in oklab, var(--green) 40%, var(--line));
+  background: color-mix(in oklab, var(--green) 6%, var(--surface-2));
+}
+
+/* Troubleshooting Accordion Steps */
+.net-troubleshoot-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.net-ts-step {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+  transition: border-color 0.15s ease;
+}
+.net-ts-step:hover {
+  border-color: var(--text-2);
+}
+.net-ts-head {
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  width: 100%;
+  text-align: left;
+}
+.net-ts-head b {
+  font-weight: 600;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.net-ts-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 11.5px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.net-ts-body {
+  padding: 0 16px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+/* ---------------- Animations ---------------- */
+@keyframes net-glow-slow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(240, 184, 74, 0.4); }
+  50% { box-shadow: 0 0 0 5px rgba(240, 184, 74, 0); }
+}
+@keyframes net-glow-bad {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(180, 40, 40, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(180, 40, 40, 0); }
+}
+@keyframes slide-banner-down {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes radar-wave {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .net-hero-card {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+  .net-image-container {
+    max-height: 260px;
+  }
+  .net-dual-grid {
+    grid-template-columns: 1fr;
+  }
+  .net-metrics-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
