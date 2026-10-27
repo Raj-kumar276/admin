@@ -25,6 +25,7 @@ import SupportPage from './pages/SupportPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import HyderabadPage from './pages/HyderabadPage.jsx';
 import RefundsPage from './pages/RefundsPage.jsx';
+import BannersPage from './pages/BannersPage.jsx';
 
 function titleFor(pathname, db) {
   const m = pathname.match(/^\/services\/(\w+)/);
@@ -85,7 +86,12 @@ export default function App() {
               <Route path="/support" element={<SupportPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/hyderabad" element={<HyderabadPage />} />
+              <Route path="/banners" element={<BannersPage />} />
               <Route path="/zones" element={<Navigate to="/hyderabad" replace />} />
+              {/* Pages removed in the state-management clean-up: send old links somewhere useful. */}
+              <Route path="/orders/*" element={<Navigate to="/services/food" replace />} />
+              <Route path="/pricing" element={<Navigate to="/services/food?tab=pricing" replace />} />
+              <Route path="/partners/verification" element={<Navigate to="/partners?kyc=Pending" replace />} />
               <Route path="*" element={<Navigate to="/overview" replace />} />
             </Routes>
           </main>

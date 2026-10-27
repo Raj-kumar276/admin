@@ -1,15 +1,18 @@
 import React, { useState, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '../components/common/Icon.jsx';
 import ServiceTile from '../components/common/ServiceTile.jsx';
 import Switch from '../components/common/Switch.jsx';
 import { KycPill } from '../components/common/Pills.jsx';
+import NewBannerModal from '../components/modals/NewBannerModal.jsx';
 import { useAdmin } from '../context/AdminContext.jsx';
 import usePartnerActions from '../hooks/usePartnerActions.jsx';
 import { SVC, SVCS } from '../data/constants.js';
 import { isActive } from '../data/selectors.js';
 
 export default function HyderabadPage() {
-  const { db, refresh, toast, confirm, copyText, openOrder } = useAdmin();
+  const { db, refresh, toast, confirm, copyText, openOrder, openModal } = useAdmin();
+  const nav = useNavigate();
   const act = usePartnerActions();
   const partnersSectionRef = useRef(null);
 
@@ -29,7 +32,13 @@ export default function HyderabadPage() {
   const totalPartners = db.partners.length;
   const workingPartners = db.partners.filter((p) => p.online);
   const offlinePartners = db.partners.filter((p) => !p.online);
-  const activeOrders = db.orders.filter(isActive);
+  const [bannerTab, setBannerTab] = useState('all'); // 'all' | 'alert' | 'promo'
+  const allBanners = db.banners || [];
+  const cityBanners = allBanners.filter((b) => {
+    if (bannerTab === 'alert') return b.placement === 'city_alert' || (b.badge && b.badge.toLowerCase().includes('notice'));
+    if (bannerTab === 'promo') return b.placement !== 'city_alert';
+    return true;
+  });
 
   // Zone toggling
   const toggleZone = (z, e) => {
@@ -177,6 +186,157 @@ export default function HyderabadPage() {
           </div>
         </div>
       )}
+
+      {/* Hyderabad Operations Banners & Broadcasts Section */}
+      <div className="card" style={{ padding: '16px 18px' }}>
+        <div className="row" style={{ justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <div className="row" style={{ gap: 8 }}>
+              <span className="pill t-good" style={{ fontWeight: 700 }}>
+                <Icon name="megaphone" size={13} /> Operations Banners
+              </span>
+              <b style={{ fontSize: 15 }}>City Announcements & Customer Banners</b>
+            </div>
+            <p style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>
+              {allBanners.filter((b) => b.active).length} active campaigns running across Hyderabad zones
+            </p>
+          </div>
+          <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+            <div className="seg" role="group" aria-label="Banner filter tab">
+              <button aria-pressed={bannerTab === 'all'} onClick={() => setBannerTab('all')}>
+                All ({allBanners.length})
+              </button>
+              <button aria-pressed={bannerTab === 'alert'} onClick={() => setBannerTab('alert')}>
+                City Alerts ({allBanners.filter((b) => b.placement === 'city_alert' || (b.badge && b.badge.toLowerCase().includes('notice'))).length})
+              </button>
+              <button aria-pressed={bannerTab === 'promo'} onClick={() => setBannerTab('promo')}>
+                Promos ({allBanners.filter((b) => b.placement !== 'city_alert').length})
+              </button>
+            </div>
+            <button className="btn sm ghost" onClick={() => nav('/banners')} title="Open full Banners page">
+              All Banners &rarr;
+            </button>
+            <button
+              className="btn sm primary"
+              onClick={() =>
+                openModal(
+                  <NewBannerModal
+                    defaultPlacement={bannerTab === 'alert' ? 'city_alert' : 'home_hero'}
+                    defaultBadge={bannerTab === 'alert' ? 'Operational Notice' : 'Featured Deal'}
+                  />
+                )
+              }
+            >
+              <Icon name="plus" size={14} />
+              Create banner
+            </button>
+          </div>
+        </div>
+
+        {cityBanners.length === 0 ? (
+          <div className="card empty" style={{ margin: 0, padding: '24px 16px' }}>
+            <Icon name="banner" size={28} />
+            <b>No banners match the selected tab</b>
+            <p style={{ fontSize: 12.5 }}>Create a new notice or promo banner to broadcast to Hyderabad customers.</p>
+            <button
+              className="btn sm primary"
+              onClick={() => openModal(<NewBannerModal />)}
+            >
+              <Icon name="plus" size={13} /> Create banner
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {cityBanners.map((bn) => (
+              <div
+                key={bn.id}
+                style={{
+                  background: bn.gradient || 'linear-gradient(135deg, #FF6B4A 0%, #D83A1E 100%)',
+                  color: '#FFFFFF',
+                  borderRadius: 12,
+                  padding: '14px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 14,
+                  flexWrap: 'wrap',
+                  opacity: bn.active ? 1 : 0.72,
+                  boxShadow: bn.active ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 260, flex: 1 }}>
+                  {bn.image && (
+                    <div className="bn-sq-thumb" style={{ width: 68, height: 68, minWidth: 68 }}>
+                      <img src={bn.image} alt={bn.title} />
+                    </div>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5, flexWrap: 'wrap' }}>
+                      <span style={{ background: 'rgba(255,255,255,0.25)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700 }}>
+                        {bn.badge || 'Advisory'}
+                      </span>
+                      <span style={{ background: 'rgba(0,0,0,0.22)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 600 }}>
+                        {bn.placement === 'city_alert' ? 'City Notice' : bn.placement === 'home_hero' ? 'Home Carousel' : bn.placement}
+                      </span>
+                      <span style={{ fontSize: 11.5, opacity: 0.9 }}>📍 {bn.targetArea}</span>
+                      {bn.phone && (
+                        <span style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700 }}>
+                          📱 {bn.phone} {bn.targetCustomer ? `(${bn.targetCustomer})` : ''}
+                        </span>
+                      )}
+                      <span style={{ fontSize: 11, opacity: 0.75 }}>ID: {bn.id}</span>
+                    </div>
+                    <b style={{ fontSize: 14.5, display: 'block', lineHeight: 1.3 }}>{bn.title}</b>
+                    <span style={{ fontSize: 12.5, opacity: 0.92, display: 'block', marginTop: 2 }}>{bn.desc}</span>
+                  </div>
+                </div>
+
+                <div className="row" style={{ gap: 10, background: 'rgba(0,0,0,0.25)', padding: '6px 12px', borderRadius: 10 }}>
+                  <label className="row" style={{ gap: 6, fontSize: 12, fontWeight: 600, color: '#FFFFFF', cursor: 'pointer' }}>
+                    <Switch
+                      checked={bn.active}
+                      onChange={(e) => {
+                        bn.active = e.target.checked;
+                        db.banners = [...allBanners];
+                        toast(`${bn.id} banner is now ${bn.active ? 'live' : 'paused'}`);
+                        refresh();
+                      }}
+                    />
+                    {bn.active ? 'Live' : 'Paused'}
+                  </label>
+                  <button
+                    className="btn sm ghost"
+                    style={{ color: '#FFFFFF', padding: '3px 8px' }}
+                    onClick={() => copyText(bn.ctaLink, 'Copied deep link')}
+                    title="Copy deep link"
+                  >
+                    <Icon name="copy" size={13} />
+                  </button>
+                  <button
+                    className="btn sm ghost"
+                    style={{ color: '#FFB4B4', padding: '3px 8px' }}
+                    onClick={() =>
+                      confirm({
+                        title: `Delete banner ${bn.id}?`,
+                        text: `Are you sure you want to remove "${bn.title}"?`,
+                        ok: 'Delete',
+                        onOk: () => {
+                          db.banners = (db.banners || []).filter((x) => x.id !== bn.id);
+                          toast(`${bn.id} deleted`);
+                          refresh();
+                        },
+                      })
+                    }
+                    title="Delete banner"
+                  >
+                    <Icon name="trash" size={13} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* KPI Cards */}
       <div className="kpis">

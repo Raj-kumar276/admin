@@ -2,7 +2,7 @@ import React from 'react';
 import { ICON_PATHS } from './iconPaths.js';
 
 /** Stroke icon. `name` is a key of ICON_PATHS. */
-export default function Icon({ name, size = 18, className = '' }) {
+export default function Icon({ name, size = 18, className = '', style, ...rest }) {
   return (
     <svg
       className={('i ' + className).trim()}
@@ -15,7 +15,9 @@ export default function Icon({ name, size = 18, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
+      style={style}
       dangerouslySetInnerHTML={{ __html: ICON_PATHS[name] || '' }}
+      {...rest}
     />
   );
 }

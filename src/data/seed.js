@@ -1,6 +1,11 @@
 import { SVCS, AREAS, SPECS, CLINICS, HOME_S } from './constants.js';
 import { rnd, pick, ri } from '../utils/random.js';
 import { PRICING_DEFAULT, clone, makePartner, genOrder, activityFor, person, plate } from './generators.js';
+import imgBiryani from '../assets/banners/biryani.jpg';
+import imgGrocery from '../assets/banners/grocery.jpg';
+import imgDoctor from '../assets/banners/doctor.jpg';
+import imgRide from '../assets/banners/ride.jpg';
+import imgHome from '../assets/banners/home.jpg';
 
 export const PLAN_DEFAULTS = [
   ['Bike', 100, '15 rides', 42],
@@ -38,6 +43,8 @@ export function createDb() {
     admins: [],
     platform: [],
     zones: [],
+    banners: [],
+    bnid: 107,
     paused: { food: false, grocery: false, ride: false, care: false, home: false },
   };
 
@@ -261,6 +268,132 @@ export function createDb() {
   ];
   db.zones = AREAS.map((z, i) => ({ z, on: i !== 11 }));
 
+  /* marketing & operational banners */
+  db.banners = [
+    {
+      id: 'BN-101',
+      title: 'Biryani Fest 50% Off',
+      desc: 'Order fresh dum biryani with free delivery across the city.',
+      svc: 'food',
+      placement: 'home_hero',
+      badge: 'Trending Fest',
+      theme: 'orange',
+      gradient: 'linear-gradient(135deg, #F97316 0%, #C2410C 100%)',
+      targetArea: 'All Hyderabad',
+      ctaText: 'Order Biryani',
+      ctaLink: 'onebuddy://services/food',
+      image: imgBiryani,
+      active: true,
+      impressions: 54200,
+      clicks: 7640,
+      ctr: '14.1%',
+      startsAt: '2026-10-01',
+      exp: '2026-11-30',
+    },
+    {
+      id: 'BN-102',
+      title: 'Monsoon Rain Alert',
+      desc: 'Heavy rain reported in city. Delivery may take 15 mins more.',
+      svc: 'all',
+      placement: 'city_alert',
+      badge: 'Operational Advisory',
+      theme: 'amber',
+      gradient: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
+      targetArea: 'Madhapur, Gachibowli, Kondapur',
+      phone: '9848022338',
+      targetCustomer: 'Keerthi Rao',
+      ctaText: 'View City Status',
+      ctaLink: 'onebuddy://hyderabad',
+      image: null,
+      active: true,
+      impressions: 91800,
+      clicks: 11450,
+      ctr: '12.5%',
+      startsAt: '2026-10-15',
+      exp: '2026-10-31',
+    },
+    {
+      id: 'BN-103',
+      title: '10-Min Groceries',
+      desc: 'Fresh farm milk, bread and veggies delivered to your door.',
+      svc: 'grocery',
+      placement: 'home_hero',
+      badge: 'Flash 10 Min',
+      theme: 'green',
+      gradient: 'linear-gradient(135deg, #10B981 0%, #047857 100%)',
+      targetArea: 'All Hyderabad',
+      ctaText: 'Shop Groceries',
+      ctaLink: 'onebuddy://services/grocery',
+      image: imgGrocery,
+      active: true,
+      impressions: 38700,
+      clicks: 5120,
+      ctr: '13.2%',
+      startsAt: '2026-10-08',
+      exp: '2026-12-15',
+    },
+    {
+      id: 'BN-104',
+      title: 'Zero Surge Rides',
+      desc: 'Fixed transparent auto and bike fares with zero peak surge.',
+      svc: 'ride',
+      placement: 'service_top',
+      badge: 'Daily Commute',
+      theme: 'yellow',
+      gradient: 'linear-gradient(135deg, #EAB308 0%, #A16207 100%)',
+      targetArea: 'Hitech City, Madhapur, Ameerpet',
+      ctaText: 'Book Fast Ride',
+      ctaLink: 'onebuddy://services/ride',
+      image: imgRide,
+      active: true,
+      impressions: 31200,
+      clicks: 4180,
+      ctr: '13.4%',
+      startsAt: '2026-10-12',
+      exp: '2026-11-20',
+    },
+    {
+      id: 'BN-105',
+      title: 'Doctor Consult ₹199',
+      desc: 'Top specialists from Apollo & Care clinics with digital Rx.',
+      svc: 'care',
+      placement: 'service_top',
+      badge: 'Healthcare Plus',
+      theme: 'blue',
+      gradient: 'linear-gradient(135deg, #0EA5E9 0%, #0369A1 100%)',
+      targetArea: 'All Hyderabad',
+      ctaText: 'Consult ₹199',
+      ctaLink: 'onebuddy://services/care',
+      image: imgDoctor,
+      active: true,
+      impressions: 22400,
+      clicks: 2190,
+      ctr: '9.8%',
+      startsAt: '2026-10-05',
+      exp: '2026-11-10',
+    },
+    {
+      id: 'BN-106',
+      title: 'Deep Home Cleaning',
+      desc: 'Full home sanitization & sofa shampooing by verified pros.',
+      svc: 'home',
+      placement: 'checkout_strip',
+      badge: 'Festive Prep',
+      theme: 'purple',
+      gradient: 'linear-gradient(135deg, #8B5CF6 0%, #5B21B6 100%)',
+      targetArea: 'All Hyderabad',
+      ctaText: 'Book Cleaning',
+      ctaLink: 'onebuddy://services/home',
+      image: imgHome,
+      active: false,
+      impressions: 16800,
+      clicks: 1380,
+      ctr: '8.2%',
+      startsAt: '2026-09-25',
+      exp: '2026-10-20',
+    },
+  ];
+
   return db;
 }
 
@@ -269,5 +402,7 @@ export const getDb = () => {
   if (!DB) DB = createDb();
   if (!DB.refunds) DB.refunds = [];
   if (!DB.rfid) DB.rfid = 8110;
+  if (!DB.banners) DB.banners = [];
+  if (!DB.bnid) DB.bnid = 107;
   return DB;
 };

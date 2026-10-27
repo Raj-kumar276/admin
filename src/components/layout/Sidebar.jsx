@@ -13,6 +13,7 @@ export const NAV = [
     lab: 'Operations',
     items: [
       { path: '/hyderabad', n: 'City & Zones', i: 'pin' },
+      { path: '/banners', n: 'Banners', i: 'banner' },
       { path: '/partners', n: 'Partners & KYC', i: 'shield' },
       { path: '/customers', n: 'Customers', i: 'users' },
       { path: '/offers', n: 'Offers & coupons', i: 'tag' },
@@ -41,6 +42,10 @@ export default function Sidebar({ open, onClose }) {
     if (it.path === '/hyderabad') {
       const n = db.partners.filter((p) => p.online).length;
       return <span className="cnt" title={`${n} partners working`}>{n}</span>;
+    }
+    if (it.path === '/banners') {
+      const n = (db.banners || []).filter((b) => b.active).length;
+      if (n) return <span className="cnt" title={`${n} active banners`}>{n}</span>;
     }
     if (it.path === '/partners') {
       const n = db.partners.filter((p) => p.kyc === 'Pending').length;

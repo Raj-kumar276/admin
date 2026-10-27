@@ -57,10 +57,19 @@ export const QUICK_REPLIES = [
   'Could you share a photo of the issue?',
 ];
 
+export const BANNER_PLACEMENTS = [
+  { id: 'all', name: 'All placements' },
+  { id: 'home_hero', name: 'App Home Hero Carousel', desc: 'Prominent top carousel on the OneBuddy main screen' },
+  { id: 'service_top', name: 'Service Header Banner', desc: 'Top banner inside Food, Grocery, Ride, Care, or Home' },
+  { id: 'city_alert', name: 'Operational City Alert', desc: 'High-priority advisory strip across active zones' },
+  { id: 'checkout_strip', name: 'Checkout Offer Strip', desc: 'Promotional strip on payment & checkout screens' },
+];
+
 export const PAGE_TITLES = {
   overview: ['Overview', 'All five services · Hyderabad'],
   hyderabad: ['Hyderabad Operations', 'Service zones and active working partners'],
   zones: ['Hyderabad Operations', 'Service zones and active working partners'],
+  banners: ['Banners & Campaigns', 'Promotional sliders, app hero banners and operational notices'],
   partners: ['Partners & KYC', 'Restaurants, stores, riders, captains, doctors and pros'],
   customers: ['Customers', 'Everyone who has ordered on OneBuddy'],
   offers: ['Offers & coupons', 'Promotions running across services'],
