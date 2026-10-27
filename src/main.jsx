@@ -4,6 +4,7 @@ import { HashRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { AdminProvider } from './context/AdminContext.jsx';
 import { NetworkProvider } from './context/NetworkContext.jsx';
+import './firebase.js';
 import './styles/index.css';
 
 // Apply the saved theme before first paint.
