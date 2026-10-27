@@ -47,7 +47,8 @@ export default function BannersPage() {
     if (statusFilter === 'live' && !b.active) return false;
     if (statusFilter === 'paused' && b.active) return false;
     if (q) {
-      const text = `${b.id} ${b.title} ${b.desc} ${b.badge} ${b.targetArea} ${b.placement} ${b.phone || ''} ${b.targetCustomer || ''}`.toLowerCase();
+      const discStr = b.discountType && b.discountType !== 'none' ? `${b.discountValue}${b.discountType} off min ${b.minOrder} max ${b.maxDiscount}` : '';
+      const text = `${b.id} ${b.title} ${b.desc} ${b.badge} ${b.targetArea} ${b.placement} ${b.phone || ''} ${b.targetCustomer || ''} ${discStr}`.toLowerCase();
       if (!text.includes(q)) return false;
     }
     return true;
@@ -64,7 +65,7 @@ export default function BannersPage() {
   const handleCopyTable = () => {
     copyTable(
       {
-        headers: ['ID', 'Title', 'Service', 'Placement', 'Area', 'Target Phone', 'Impressions', 'Clicks', 'CTR', 'Status', 'Expiry'],
+        headers: ['ID', 'Title', 'Service', 'Placement', 'Area', 'Target Phone', 'Discount', 'Impressions', 'Clicks', 'CTR', 'Status', 'Expiry'],
         rows: filteredBanners.map((b) => [
           b.id,
           b.title,
@@ -72,6 +73,7 @@ export default function BannersPage() {
           b.placement,
           b.targetArea,
           b.phone ? `${b.phone} (${b.targetCustomer || 'Registered'})` : 'All Users',
+          b.discountType && b.discountType !== 'none' ? `${b.discountType === '%' ? `${b.discountValue}% OFF` : `₹${b.discountValue} OFF`} (Min ₹${b.minOrder || 0}, Max ₹${b.maxDiscount || 0})` : 'None',
           (b.impressions || 0).toLocaleString('en-IN'),
           (b.clicks || 0).toLocaleString('en-IN'),
           b.ctr || '0%',
@@ -294,6 +296,13 @@ export default function BannersPage() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <b style={{ fontSize: 15, display: 'block', lineHeight: 1.25 }}>{b.title}</b>
                       <p style={{ fontSize: 12, opacity: 0.9, lineHeight: 1.35, margin: '4px 0 0' }}>{b.desc}</p>
+                      {b.discountType && b.discountType !== 'none' && b.discountValue > 0 && (
+                        <div className="bn-discount-strip">
+                          🏷️ {b.discountType === '%' ? `${b.discountValue}% OFF` : `₹${b.discountValue} FLAT OFF`}
+                          {b.minOrder > 0 && <span>Min ₹{b.minOrder}</span>}
+                          {b.maxDiscount > 0 && <span>Max ₹{b.maxDiscount}</span>}
+                        </div>
+                      )}
                     </div>
                     {b.image && (
                       <div className="bn-sq-thumb">
@@ -395,6 +404,7 @@ export default function BannersPage() {
                   <th>Service</th>
                   <th>Placement</th>
                   <th>Target Zone</th>
+                  <th>Discount / Terms</th>
                   <th style={{ textAlign: 'right' }}>Impressions</th>
                   <th style={{ textAlign: 'right' }}>Clicks</th>
                   <th style={{ textAlign: 'right' }}>CTR</th>
@@ -444,6 +454,24 @@ export default function BannersPage() {
                           </span>
                         )}
                       </div>
+                    </td>
+                    <td>
+                      {b.discountType && b.discountType !== 'none' && b.discountValue > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <span className="bn-discount-pill">
+                            🏷️ {b.discountType === '%' ? `${b.discountValue}% OFF` : `₹${b.discountValue} OFF`}
+                          </span>
+                          {(b.minOrder > 0 || b.maxDiscount > 0) && (
+                            <small style={{ fontSize: 10.5, color: 'var(--muted)' }}>
+                              {b.minOrder > 0 ? `Min ₹${b.minOrder}` : ''}
+                              {b.minOrder > 0 && b.maxDiscount > 0 ? ' · ' : ''}
+                              {b.maxDiscount > 0 ? `Max ₹${b.maxDiscount}` : ''}
+                            </small>
+                          )}
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 12, color: 'var(--muted)' }}>—</span>
+                      )}
                     </td>
                     <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                       {(b.impressions || 0).toLocaleString('en-IN')}

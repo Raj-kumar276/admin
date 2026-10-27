@@ -35,6 +35,12 @@ export default function NewBannerModal({ defaultPlacement = 'home_hero', default
   const [ctaText, setCtaText] = useState('Explore Now');
   const [image, setImage] = useState(null);
 
+  // Discount & Promotional terms
+  const [discountType, setDiscountType] = useState('none');
+  const [discountValue, setDiscountValue] = useState('');
+  const [minOrder, setMinOrder] = useState('');
+  const [maxDiscount, setMaxDiscount] = useState('');
+
   // Phone number targeting with live suggestions from registered users
   const [phone, setPhone] = useState('');
   const [phoneDropdownOpen, setPhoneDropdownOpen] = useState(false);
@@ -141,6 +147,21 @@ export default function NewBannerModal({ defaultPlacement = 'home_hero', default
       bad = true;
     }
 
+    const discType = f.discountType || discountType || 'none';
+    const discVal = Number(f.discountValue ?? discountValue) || 0;
+    const minOrd = Number(f.minOrder ?? minOrder) || 0;
+    const maxDisc = Number(f.maxDiscount ?? maxDiscount) || 0;
+
+    if (discType !== 'none') {
+      if (discVal <= 0) {
+        err('discountValue', 'Enter a discount value greater than 0.');
+        bad = true;
+      } else if (discType === '%' && discVal > 90) {
+        err('discountValue', "Percentage discount can't exceed 90%.");
+        bad = true;
+      }
+    }
+
     if (bad) return false;
 
     const newId = 'BN-' + (db.bnid || 107);
@@ -163,6 +184,10 @@ export default function NewBannerModal({ defaultPlacement = 'home_hero', default
       targetCustomer: matchedUser ? matchedUser.name : null,
       targetRole: matchedUser ? matchedUser.role : null,
       targetUserId: matchedUser ? matchedUser.id : null,
+      discountType: discType,
+      discountValue: discVal,
+      minOrder: minOrd,
+      maxDiscount: maxDisc,
       ctaText: (f.ctaText || ctaText || 'View').trim(),
       ctaLink: (f.ctaLink || (svc === 'all' ? 'onebuddy://hyderabad' : `onebuddy://services/${f.svc || svc}`)).trim(),
       image: image || null,
@@ -236,6 +261,13 @@ export default function NewBannerModal({ defaultPlacement = 'home_hero', default
                   <p style={{ fontSize: 12.5, opacity: 0.9, lineHeight: 1.35, margin: 0 }}>
                     {desc || 'Order fresh dum biryani with free delivery across the city.'}
                   </p>
+                  {discountType !== 'none' && discountValue && (
+                    <div className="bn-discount-strip">
+                      🏷️ {discountType === '%' ? `${discountValue}% OFF` : `₹${discountValue} FLAT OFF`}
+                      {minOrder > 0 && <span>Min ₹{minOrder}</span>}
+                      {maxDiscount > 0 && <span>Max ₹{maxDiscount}</span>}
+                    </div>
+                  )}
                 </div>
                 {image && (
                   <div className="bn-sq-thumb" style={{ width: 72, height: 72, minWidth: 72 }}>
@@ -587,6 +619,77 @@ export default function NewBannerModal({ defaultPlacement = 'home_hero', default
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Discount & Promotional Terms */}
+          <div className="bn-section-divider">
+            <span>Discount & Promotional Terms</span>
+          </div>
+
+          <div className="two">
+            <div className="field">
+              <label htmlFor="bdisc_type">Discount type</label>
+              <select
+                className="sel"
+                id="bdisc_type"
+                name="discountType"
+                value={discountType}
+                onChange={(e) => setDiscountType(e.target.value)}
+              >
+                <option value="none">No direct discount (Advisory / Announcement)</option>
+                <option value="%">Percentage (%)</option>
+                <option value="₹">Flat amount (₹)</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="bdisc_val">
+                Value {discountType === '%' ? '(%)' : discountType === '₹' ? '(₹)' : ''}
+              </label>
+              <input
+                className="inp"
+                id="bdisc_val"
+                name="discountValue"
+                type="number"
+                min="0"
+                max={discountType === '%' ? 90 : 99999}
+                disabled={discountType === 'none'}
+                placeholder={discountType === '%' ? 'e.g. 50' : discountType === '₹' ? 'e.g. 100' : 'Select discount type'}
+                value={discountValue}
+                onChange={(e) => setDiscountValue(e.target.value)}
+              />
+              <FieldError msg={e.discountValue} />
+            </div>
+          </div>
+
+          <div className="two">
+            <div className="field">
+              <label htmlFor="bdisc_min">Minimum order (₹)</label>
+              <input
+                className="inp"
+                id="bdisc_min"
+                name="minOrder"
+                type="number"
+                min="0"
+                disabled={discountType === 'none'}
+                placeholder="e.g. 199"
+                value={minOrder}
+                onChange={(e) => setMinOrder(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="bdisc_max">Maximum discount (₹)</label>
+              <input
+                className="inp"
+                id="bdisc_max"
+                name="maxDiscount"
+                type="number"
+                min="0"
+                disabled={discountType === 'none'}
+                placeholder="e.g. 120"
+                value={maxDiscount}
+                onChange={(e) => setMaxDiscount(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="field">

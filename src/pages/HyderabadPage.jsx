@@ -288,6 +288,13 @@ export default function HyderabadPage() {
                     </div>
                     <b style={{ fontSize: 14.5, display: 'block', lineHeight: 1.3 }}>{bn.title}</b>
                     <span style={{ fontSize: 12.5, opacity: 0.92, display: 'block', marginTop: 2 }}>{bn.desc}</span>
+                    {bn.discountType && bn.discountType !== 'none' && bn.discountValue > 0 && (
+                      <div className="bn-discount-strip" style={{ marginTop: 4 }}>
+                        🏷️ {bn.discountType === '%' ? `${bn.discountValue}% OFF` : `₹${bn.discountValue} FLAT OFF`}
+                        {bn.minOrder > 0 && <span>Min ₹${bn.minOrder}</span>}
+                        {bn.maxDiscount > 0 && <span>Max ₹${bn.maxDiscount}</span>}
+                      </div>
+                    )}
                   </div>
                 </div>
 
